@@ -27,10 +27,13 @@ namespace MyShop.DataAccess.InMemory
             cache["products"] = products;
         }
 
+        //Insert a product
         public void Insert(Product p)
         {
             products.Add(p);
         }
+
+        //Update a product
         public void Update(Product product)
         {
             Product productToUpdate = products.Find(p => p.Id == product.Id);
@@ -66,6 +69,7 @@ namespace MyShop.DataAccess.InMemory
             return products.AsQueryable();
         }
 
+        //Delete a product from the list by ID
         public void Delete(string Id)
         {
             Product productToDelete = products.Find(p => p.Id == Id);
