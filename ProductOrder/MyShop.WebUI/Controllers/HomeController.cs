@@ -1,4 +1,7 @@
-﻿using System;
+﻿using MyShop.Core.Models;
+using MyShop.Core.ViewModels;
+using MyShop.DataAccess.SQL;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,18 +11,51 @@ namespace MyShop.WebUI.Controllers
 {
     public class HomeController : Controller
     {
-        public ActionResult Index()
+        DataContext dc;
+        SQLRepository<Product> context;
+        SQLRepository<ProductCategory> productCategories;
+
+        //Constructor
+        public HomeController()
         {
-            return View();
+            dc = new DataContext();
+            context = new SQLRepository<Product>(dc);
+            productCategories = new SQLRepository<ProductCategory>(dc);
         }
 
-        public ActionResult About()
+        public ActionResult Index(string Category = null)
         {
-            ViewBag.Message = "Your application description page.";
+            List<Product> products;
+            List<ProductCategory> categories = productCategories.Collection().ToList();
 
-            return View();
+            //Show all products
+            if (Category == null)
+            {
+                products = context.Collection().ToList();
+            }
+            else
+            {
+                //Return filtered list of products (The reason why we use Iqueriable, To allow us to construct a filter using LINQ)
+                products = context.Collection().Where(p => p.Category == Category).ToList();
+            }
+            ProductListViewModel model = new ProductListViewModel();
+            model.Products = products;
+            model.ProductCategories = categories;
+            return View(model);
         }
 
+        public ActionResult Details(string Id)
+        {
+            Product product = context.Find(Id);
+            if (product == null)
+            {
+                return HttpNotFound();
+            }
+            else
+            {
+                return View(product);
+            }
+        }
         public ActionResult Contact()
         {
             ViewBag.Message = "Your contact page.";

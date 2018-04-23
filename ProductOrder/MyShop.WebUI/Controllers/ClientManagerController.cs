@@ -4,20 +4,22 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using MyShop.Core.Models;
-using MyShop.DataAccess.InMemory;
+using MyShop.DataAccess.SQL;
 using MyShop.Core.ViewModels;
 
 namespace MyShop.WebUI.Controllers
 {
     public class ClientManagerController : Controller
     {
-        InMemoryRepository<Client> context;
-        InMemoryRepository<ClientAddressType> clientAddressTypes;
+        DataContext dc;
+        SQLRepository<Client> context;
+        SQLRepository<ClientAddressType> clientAddressTypes;
 
         public ClientManagerController()
         {
-            context = new InMemoryRepository<Client>();
-            clientAddressTypes = new InMemoryRepository<ClientAddressType>();
+            dc = new DataContext();
+            context = new SQLRepository<Client>(dc);
+            clientAddressTypes = new SQLRepository<ClientAddressType>(dc);
         }
 
         // GET: ClientManager

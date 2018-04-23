@@ -1,24 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using MyShop.Core.Models;
 using MyShop.Core.ViewModels;
-using MyShop.DataAccess.InMemory;
+using MyShop.DataAccess.SQL;
 
 namespace MyShop.WebUI.Controllers
 {
     public class ProductManagerController : Controller
     {
-        InMemoryRepository<Product> context;
-        InMemoryRepository<ProductCategory> productCategories;
+        DataContext dc;
+        SQLRepository<Product> context;
+        SQLRepository<ProductCategory> productCategories;
 
         //Constructor
         public ProductManagerController()
         {
-            context = new InMemoryRepository<Product>();
-            productCategories = new InMemoryRepository<ProductCategory>();
+            dc = new DataContext();
+            context = new SQLRepository<Product>(dc);
+            productCategories = new SQLRepository<ProductCategory>(dc);
         }
         // GET: ProductManager
         public ActionResult Index()
@@ -40,7 +43,7 @@ namespace MyShop.WebUI.Controllers
 
         //Add product
         [HttpPost]
-        public ActionResult Create(Product product)
+        public ActionResult Create(Product product, HttpPostedFileBase file)
         {
             //Check if validation has failed
             if (!ModelState.IsValid)
@@ -49,6 +52,11 @@ namespace MyShop.WebUI.Controllers
             }
             else
             {
+                if (file != null)
+                {
+                    product.Image = product.Id + Path.GetExtension(file.FileName);
+                    file.SaveAs(Server.MapPath("//Content//ProductImages//") + product.Image);
+                }
                 context.Insert(product);
                 context.Commit();
                 return RedirectToAction("Index");
@@ -76,7 +84,7 @@ namespace MyShop.WebUI.Controllers
 
         //Carry out the update
         [HttpPost]
-        public ActionResult Edit(Product product, string Id)
+        public ActionResult Edit(Product product, string Id, HttpPostedFileBase file)
         {
             //Load product we are editing from the DB
             Product productToEdit = context.Find(Id);
@@ -93,10 +101,13 @@ namespace MyShop.WebUI.Controllers
                     //Return main page with product that will indicate validation issues.
                     return View(product);
                 }
-
+                if (file != null)
+                {
+                    productToEdit.Image = product.Id + Path.GetExtension(file.FileName);
+                    file.SaveAs(Server.MapPath("//Content//ProductImages//") + productToEdit.Image);
+                }
                 productToEdit.Category = product.Category;
                 productToEdit.Description = product.Description;
-                productToEdit.Image = product.Image;
                 productToEdit.Name = product.Name;
                 productToEdit.Price = product.Price;
                 context.Commit();

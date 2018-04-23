@@ -5,15 +5,18 @@ using System.Web;
 using System.Web.Mvc;
 using MyShop.Core.Models;
 using MyShop.DataAccess.InMemory;
+using MyShop.DataAccess.SQL;
 
 namespace MyShop.WebUI.Controllers
 {
     public class ClientAddressTypeManagerController : Controller
     {
-        InMemoryRepository<ClientAddressType> context;
+        DataContext dc;
+        SQLRepository<ClientAddressType> context;
         public ClientAddressTypeManagerController()
         {
-            context = new InMemoryRepository<ClientAddressType>();
+            dc = new DataContext();
+            context = new SQLRepository<ClientAddressType>(dc);
         }
 
         // GET: ClientAddressTypeManager

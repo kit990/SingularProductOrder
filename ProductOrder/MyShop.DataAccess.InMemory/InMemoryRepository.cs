@@ -23,7 +23,7 @@ namespace MyShop.DataAccess.InMemory
         //Constructor
         public InMemoryRepository()
         {
-            //reflection to get the actual name of the clss
+            //reflection to get the actual name of the class
             className = typeof(T).Name;
             items = cache[className] as List<T>;
 

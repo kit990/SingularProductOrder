@@ -278,9 +278,11 @@
     <Content Include="Views\ClientManager\Edit.cshtml" />
     <Content Include="Views\ClientManager\Index.cshtml" />
     <Content Include="Views\ClientAddressTypeManager\Index.cshtml" />
+    <Content Include="Views\Home\Details.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Content\ProductImages\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
